@@ -1,0 +1,19 @@
+main: online.meinkraft.highscores.HighScores
+name: HighScores
+version: 1.0-SNAPSHOT
+description: Track player high scores
+api-version: 1.18
+load: POSTWORLD
+author: Reldeam
+website: meinkraft.online
+depend: [PlaceholderAPI]
+permissions:
+  highscores.command.highscores:
+    description: Allows use of command, /highscores
+    default: op
+commands:
+  highscores:
+    description: Enables the plugin
+    usage: /highscores [list|get|new]
+    permission: highscores.command.highscores
+    aliases: hs
