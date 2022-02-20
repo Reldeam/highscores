@@ -4,7 +4,7 @@ version: 1.0-SNAPSHOT
 description: Track player high scores
 api-version: 1.18
 load: POSTWORLD
-author: Reldeam
+authors: [Reldeam, angelofdev]
 website: meinkraft.online
 depend: [PlaceholderAPI]
 permissions:
