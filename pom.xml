@@ -55,10 +55,10 @@
     </dependency>
   </dependencies>
 
+  <!-- move target .jar to my Minecraft Server 
   <build>
     <plugins>
     
-    <!-- move target .jar to my Minecraft Server -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -70,5 +70,6 @@
 
     </plugins>
   </build>
+  -->
 
 </project>

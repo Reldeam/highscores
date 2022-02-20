@@ -3,6 +3,8 @@ package online.meinkraft.highscores.command;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +16,8 @@ import online.meinkraft.highscores.exception.TableNotFoundException;
 import online.meinkraft.highscores.table.Table;
 
 public class HighScoresCommand implements CommandExecutor{
+
+    private static final int MAX_BLOCK_DISTANCE = 32;
 
     private final HighScores plugin;
 
@@ -78,12 +82,14 @@ public class HighScoresCommand implements CommandExecutor{
             case "sign":
                 tableName = args[1];
                 rank = Integer.parseInt(args[2]);
-                addSign(sender, tableName, rank);
+                setSign(sender, tableName, rank);
                 break;
+            case "skull":
             case "head":
+            case "playerhead":
                 tableName = args[1];
                 rank = Integer.parseInt(args[2]);
-                addHead(sender, tableName, rank);
+                setSkull(sender, tableName, rank);
                 break;
             case "help":
             default:
@@ -110,7 +116,8 @@ public class HighScoresCommand implements CommandExecutor{
             Table table = new Table(tableName, placeholder);
             table.save(plugin.getTableFolder());
             sender.sendMessage("Table created");
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -120,11 +127,14 @@ public class HighScoresCommand implements CommandExecutor{
             Table table = Table.getTable(plugin.getTableFolder(), tableName);
             table.delete(plugin.getTableFolder());
             sender.sendMessage("Table destroyed");
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } 
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (TableNotFoundException e) {
+        } 
+        catch (TableNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -133,11 +143,14 @@ public class HighScoresCommand implements CommandExecutor{
         try {
             Table table = Table.getTable(plugin.getTableFolder(), tableName);
             sender.sendMessage(table.toString());
-        } catch (ClassNotFoundException e) {
+        } 
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (TableNotFoundException e) {
+        } 
+        catch (TableNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -146,12 +159,42 @@ public class HighScoresCommand implements CommandExecutor{
         sender.sendMessage(Table.listTables(plugin.getTableFolder()).toString());
     }
 
-    private void addSign(CommandSender sender,  String tableName, Integer rank) {
+    private void setSign(CommandSender sender,  String tableName, Integer rank) {
         sender.sendMessage("Sign added");
     }
 
-    private void addHead(CommandSender sender, String tableName, Integer rank) {
-        sender.sendMessage("Player head added");
+    private void setSkull(CommandSender sender, String tableName, Integer rank) {
+
+        try {
+            if(sender instanceof Player) {
+                Player player = (Player) sender;
+                Block targetBlock = player.getTargetBlock(null, MAX_BLOCK_DISTANCE);
+                if(targetBlock.getType() == Material.PLAYER_HEAD) {
+                    Table table = Table.getTable(plugin.getTableFolder(), tableName);
+                    table.setSkull(targetBlock.getLocation(), rank);
+                    sender.sendMessage("Player head added");
+                }
+                else {
+                    sender.sendMessage("You must be looking at a player head");
+                }
+            }
+            else {
+                sender.sendMessage("You must be a player to use this command");
+            }
+        }
+        catch(IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+        catch (TableNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void help(CommandSender sender) {
@@ -163,13 +206,17 @@ public class HighScoresCommand implements CommandExecutor{
         try {
             table = Table.getTable(plugin.getTableFolder(), tableName);
             sender.sendMessage(table.getEntry(rank).toString());
-        } catch (ClassNotFoundException e) {
+        } 
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (TableNotFoundException e) {
+        } 
+        catch (TableNotFoundException e) {
             e.printStackTrace();
-        } catch(IndexOutOfBoundsException e) {
+        } 
+        catch(IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
     }
@@ -179,13 +226,17 @@ public class HighScoresCommand implements CommandExecutor{
             Player player = Bukkit.getPlayer(playerName);
             Table table = Table.getTable(plugin.getTableFolder(), tableName);
             sender.sendMessage(table.getEntry(player).toString());
-        } catch (ClassNotFoundException e) {
+        } 
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
-        } catch (TableNotFoundException e) {
+        } 
+        catch (TableNotFoundException e) {
             e.printStackTrace();
-        } catch (PlayerNotFoundException e) {
+        } 
+        catch (PlayerNotFoundException e) {
             e.printStackTrace();
         }
         
@@ -197,7 +248,8 @@ public class HighScoresCommand implements CommandExecutor{
         }
         try {
             Double.parseDouble(value);
-        } catch (NumberFormatException exception) {
+        } 
+        catch (NumberFormatException exception) {
             return false;
         }
         return true;
